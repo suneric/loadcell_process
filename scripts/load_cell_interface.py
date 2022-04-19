@@ -8,8 +8,9 @@ import RPi.GPIO as GPIO
 import numpy as np
 from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension
 
-REF = 5.08          # Modify according to actual voltage
-                    # external AVDD and AVSS(Default), or internal 2.5V
+# Modify according to actual voltage
+# external AVDD and AVSS(Default), or internal 2.5V
+REF = 5.08
 
 class mykalman():
 

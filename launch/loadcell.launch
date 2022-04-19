@@ -1,0 +1,1 @@
+<node pkg="loadcell_process" type="load_cell_interface.py" name="loadcell_info" output="screen"/>
