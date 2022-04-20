@@ -49,3 +49,37 @@ sudo apt-get install python3-pip
 sudo pip install RPi-GPIO
 sudo pip install spidev
 ```
+
+### setup service
+1. create a service /etc/systemd/system/loadcell-service.service
+```
+[Unit]
+Description="Load Cell ROS Start"
+After=multi-user.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+ExecStart=/home/ubuntu/catkin_ws/src/loadcell_process/auto_start.sh
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+2. make scripts executable
+```
+sudo chmod +x auto_start.sh
+sudo chmod +x scripts/load_cell_interface.py
+```
+
+3. enable sudo no password ```sudo visudo``` and add line after group sudo
+```
+${username} ALL=(ALL:ALL) NOPASSWD:ALL
+```
+
+4. enable service
+```
+sudo systemctl enable loadcell-service.service
+```

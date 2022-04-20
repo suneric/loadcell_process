@@ -74,7 +74,7 @@ class LoadCellProcess:
 
     def acquire_data(self):
         ADC_Value = self.ADC.ADS1263_GetAll()    # get ADC1 value
-        print(ADC_Value)
+        # print(ADC_Value)
         for i in range(0, 3):
             if(ADC_Value[i]>>31 ==1):
                 if i==0:
