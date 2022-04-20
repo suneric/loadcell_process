@@ -1,4 +1,4 @@
-#!/user/bin/python3
+#!/usr/bin/python3
 
 import rospy
 import time
@@ -50,7 +50,7 @@ class LoadCellProcess:
         self.ADC = ADS1263.ADS1263()
         rospy.loginfo("Setting up the node")
         rospy.init_node("loadcell_ros_interface", anonymous=True)
-        self.force_pub = rospy.Publish('/loadcell_forces', Float32MultiArray, queue_size=1)
+        self.force_pub = rospy.Publisher('/loadcell_forces', Float32MultiArray, queue_size=1)
         self.fx=np.zeros((1, 100))
         self.fy=np.zeros((1, 100))
         self.fz=np.zeros((1, 100))
@@ -74,35 +74,36 @@ class LoadCellProcess:
 
     def acquire_data(self):
         ADC_Value = self.ADC.ADS1263_GetAll()    # get ADC1 value
+        print(ADC_Value)
         for i in range(0, 3):
             if(ADC_Value[i]>>31 ==1):
                 if i==0:
                     raw=-1*(REF*2 - ADC_Value[i] * REF / 0x80000000)
                     self.fx=(raw-self.fx_zero)*200
-                    self.fx_filtered=self.kfx.update(fx)
+                    self.fx_filtered=self.kfx.update(self.fx)
                 if i==1:
                     raw=-1*(REF*2 - ADC_Value[i] * REF / 0x80000000)
                     self.fy=(raw-self.fy_zero)*200
-                    self.fy_filtered=self.kfy.update(fy)
+                    self.fy_filtered=self.kfy.update(self.fy)
                 if i==2:
                     raw=-1*(REF*2 - ADC_Value[i] * REF / 0x80000000)
                     self.fz=(raw-self.fz_zero)*200
-                    self.fz_filtered=self.kfz.update(fz)
+                    self.fz_filtered=self.kfz.update(self.fz)
                 #print("ADC1 IN%d = -%lf" %(i, (REF*2 - ADC_Value[i] * REF / 0x80000000)))
             else:
                 #print("ADC1 IN%d = %lf" %(i, (ADC_Value[i] * REF / 0x7fffffff)))   # 32bit
                 if i==0:
                     raw=float((ADC_Value[i] * REF / 0x7fffffff))
                     self.fx=(raw-self.fx_zero)*200
-                    self.fx_filtered=self.kfx.update(fx)
+                    self.fx_filtered=self.kfx.update(self.fx)
                 if i==1:
                     raw=float((ADC_Value[i] * REF / 0x7fffffff))
                     self.fy=(raw-self.fy_zero)*200
-                    self.fy_filtered=self.kfy.update(fy)
+                    self.fy_filtered=self.kfy.update(self.fy)
                 if i==2:
                     raw=float((ADC_Value[i] * REF / 0x7fffffff))
                     self.fz=(raw-self.fz_zero)*200
-                    self.fz_filtered=self.kfz.update(fz)
+                    self.fz_filtered=self.kfz.update(self.fz)
 
     def publish_forces(self):
         self.acquire_data()
