@@ -11,6 +11,7 @@ from std_msgs.msg import Float32, Float32MultiArray, MultiArrayDimension
 # Modify according to actual voltage
 # external AVDD and AVSS(Default), or internal 2.5V
 REF = 5.08
+SCALE = 100
 
 class mykalman():
     def __init__(self):
@@ -70,9 +71,9 @@ class LoadCellProcess:
         self.fy2_filtered=np.zeros((1, 100))
         self.fz2_filtered=np.zeros((1, 100))
 
-        self.fx_zero= 0 #2.4543
-        self.fy_zero= 0 #2.444
-        self.fz_zero= 0 #2.454
+        self.fx_zero = 0#2.4543
+        self.fy_zero = 0#2.444
+        self.fz_zero = 0#2.454
 
     def initialize(self):
         if(self.ADC.ADS1263_init_ADC1('ADS1263_7200SPS') == -1):
@@ -92,22 +93,22 @@ class LoadCellProcess:
         for i in range(0, 6):
             raw = self.adc_raw(ADC_Value[i])
             if i==0:
-                self.fx1=(raw-self.fx_zero)*200
+                self.fx1=(raw-self.fx_zero)*SCALE
                 self.fx1_filtered=self.kfx1.update(self.fx1)
             if i==1:
-                self.fy1=(raw-self.fy_zero)*200
+                self.fy1=(raw-self.fy_zero)*SCALE
                 self.fy1_filtered=self.kfy1.update(self.fy1)
             if i==2:
-                self.fz1=(raw-self.fz_zero)*200
+                self.fz1=(raw-self.fz_zero)*SCALE
                 self.fz1_filtered=self.kfz1.update(self.fz1)
             if i==3:
-                self.fx2=(raw-self.fx_zero)*200
+                self.fx2=(raw-self.fx_zero)*SCALE
                 self.fx2_filtered=self.kfx2.update(self.fx2)
             if i==4:
-                self.fy2=(raw-self.fy_zero)*200
+                self.fy2=(raw-self.fy_zero)*SCALE
                 self.fy2_filtered=self.kfy2.update(self.fy2)
             if i==5:
-                self.fz2=(raw-self.fz_zero)*200
+                self.fz2=(raw-self.fz_zero)*SCALE
                 self.fz2_filtered=self.kfz2.update(self.fz2)
 
     def publish_forces(self):
